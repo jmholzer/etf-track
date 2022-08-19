@@ -12,6 +12,7 @@ Django = "^4.1"
 [tool.poetry.dev-dependencies]
 mypy = "^0.971"
 flake8 = "^5.0.4"
+bandit = "^1.7.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
