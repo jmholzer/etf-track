@@ -8,6 +8,7 @@ license = "AGPL-3.0 license"
 [tool.poetry.dependencies]
 python = "^3.10"
 Django = "^4.1"
+psycopg2 = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.971"
