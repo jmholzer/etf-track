@@ -77,11 +77,14 @@ WSGI_APPLICATION = 'etf_track.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'etf_track',
+        'USER': os.environ['etf_track_postgres_user'],
+        'PASSWORD': os.environ['etf_track_postgres_password'],
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
