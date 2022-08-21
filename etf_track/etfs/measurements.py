@@ -23,13 +23,36 @@ class AbstractETFProcessor(ABC):
 
     def process(self) -> None:
         """Main API entry point for processing an ETF"""
-        self._download()
+        self._holdings = self._download()
     
     def _download(self) -> DataFrame:
+        """Read data from a remote CSV directly into a ``DataFrame``
+        
+        Returns:
+            A ``DataFrame`` containing holdings data for ETF being processed.
+        """
         return read_csv(self._holdings_url)
 
     @abstractmethod
-    def _parse_ev_ebitda(self) -> None:
+    def _parse_average_price_earnings(self) -> float:
+        """Parse the data contained in the holdings DataFrame to calculate
+        the average price / earnings ratio for the ETF.
+
+        Returns:
+            The average price / earnings ratio for the ETF as float.
+        
+        """
+        pass
+
+    @abstractmethod
+    def _parse_average_ev_ebitda(self) -> float:
+        """Parse the data contained in the holdings DataFrame to calculate
+        the average EV / EBITDA ratio for the ETF.
+
+        Returns:
+            The average EV / EBITDA ratio for the ETF as float.
+        
+        """        
         pass
 
 
