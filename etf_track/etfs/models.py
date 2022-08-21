@@ -6,6 +6,7 @@ class ETF(models.Model):
     ticker = models.CharField(max_length=10)
     name = models.CharField(max_length=255)
     sector = models.CharField(max_length=255)
+    expense_ratio = models.FloatField()
 
 
 class Measurement(models.Model):
@@ -13,4 +14,3 @@ class Measurement(models.Model):
     date_time = models.DateTimeField()
     p_e = models.FloatField()
     ev_ebidta = models.FloatField()
-    expense_ratio = models.FloatField()    
