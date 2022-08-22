@@ -28,7 +28,8 @@ class AbstractETFProcessor(ABC):
 
     @abstractmethod
     def _download(self) -> DataFrame:
-        """Download and store the data for a given ETF's holdings in a ``DataFrame``.
+        """Download and store the data for a given ETF's holdings in a
+        ``DataFrame``.
 
         Returns:
             A ``DataFrame`` containing holdings data for ETF being processed.
@@ -37,7 +38,7 @@ class AbstractETFProcessor(ABC):
 
     def _get_measurement_datetime(self) -> datetime:
         """
-        
+
         Returns:
             A datetime object containing the date / time of measurement.
 
@@ -65,8 +66,6 @@ class AbstractETFProcessor(ABC):
 
         """
         pass
-
-    
 
 
 class iSharesETFProcessor(AbstractETFProcessor):
