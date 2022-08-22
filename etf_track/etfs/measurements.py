@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 from pandas import DataFrame, read_csv
 
@@ -34,6 +35,15 @@ class AbstractETFProcessor(ABC):
         """
         pass
 
+    def _get_measurement_datetime(self) -> datetime:
+        """
+        
+        Returns:
+            A datetime object containing the date / time of measurement.
+
+        """
+        return datetime.now()
+
     @abstractmethod
     def _parse_average_price_earnings(self) -> float:
         """Parse the data contained in the holdings DataFrame to calculate
@@ -55,6 +65,8 @@ class AbstractETFProcessor(ABC):
 
         """
         pass
+
+    
 
 
 class iSharesETFProcessor(AbstractETFProcessor):
