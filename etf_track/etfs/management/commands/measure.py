@@ -7,7 +7,7 @@ ETF_ISSUERS_CLASS_MAP = {
 
 
 class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
+    help = "Run a measurement for the specified ETF"
 
     def add_arguments(self, parser):
         parser.add_argument("etf_issuers", nargs='+', type=str)
