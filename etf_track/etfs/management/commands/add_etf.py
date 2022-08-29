@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from etfs.models import ETF
 
 
@@ -21,11 +21,17 @@ class Command(BaseCommand):
         for arg in ARG_TYPES:
             identifiers[arg] = options[arg]
         self._save_etf(identifiers)
-        
+  
     def _save_etf(self, identifiers):
-        etf = ETF(
+        _, created = ETF.objects.get_or_create(
             name=identifiers["name"],
             ticker=identifiers["ticker"],
             exchange=identifiers["exchange"]
         )
-        etf.save()
+        self._log_success_message(created)
+
+    def _log_success_message(self, created):
+        if created:
+            print("Succesfully created")
+        else:
+            print("Object already in DB, no changes made")
