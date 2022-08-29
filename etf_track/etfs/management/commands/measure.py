@@ -1,16 +1,14 @@
 from django.core.management.base import BaseCommand, CommandError
 from etfs.measurements import iSharesETFProcessor
 
-ETF_ISSUERS_CLASS_MAP = {
-    "iShares": iSharesETFProcessor
-}
+ETF_ISSUERS_CLASS_MAP = {"iShares": iSharesETFProcessor}
 
 
 class Command(BaseCommand):
     help = "Run a measurement for the specified ETF"
 
     def add_arguments(self, parser):
-        parser.add_argument("etf_issuers", nargs='+', type=str)
+        parser.add_argument("etf_issuers", nargs="+", type=str)
 
     def handle(self, *args, **options):
         for etf_issuer in options["etf_issuers"]:

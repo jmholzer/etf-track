@@ -2,11 +2,7 @@ from django.core.management.base import BaseCommand
 from etfs.models import ETF
 
 
-ARG_TYPES = {
-    "exchange": str,
-    "ticker": str,
-    "name": str
-}
+ARG_TYPES = {"exchange": str, "ticker": str, "name": str}
 
 
 class Command(BaseCommand):
@@ -21,12 +17,12 @@ class Command(BaseCommand):
         for arg in ARG_TYPES:
             identifiers[arg] = options[arg]
         self._save_etf(identifiers)
-  
+
     def _save_etf(self, identifiers):
         _, created = ETF.objects.get_or_create(
             name=identifiers["name"],
             ticker=identifiers["ticker"],
-            exchange=identifiers["exchange"]
+            exchange=identifiers["exchange"],
         )
         self._log_success_message(created)
 
