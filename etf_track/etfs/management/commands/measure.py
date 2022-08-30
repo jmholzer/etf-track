@@ -1,27 +1,31 @@
-from django.core.management.base import BaseCommand, CommandError
-from etfs.measurements import iSharesETFProcessor
+from typing import Dict
 
-ETF_ISSUERS_CLASS_MAP = {"iShares": iSharesETFProcessor}
+from django.core.management.base import BaseCommand, CommandError
+from etfs.models import ETF
+
+ARG_TYPES = {"exchange": str, "ticker": str}
 
 
 class Command(BaseCommand):
     help = "Run a measurement for the specified ETF"
 
     def add_arguments(self, parser):
-        parser.add_argument("etf_issuers", nargs="+", type=str)
+        for arg in ARG_TYPES:
+            parser.add_argument("--" + arg, required=True, type=ARG_TYPES[arg])
 
     def handle(self, *args, **options):
-        for etf_issuer in options["etf_issuers"]:
-            if not self._validate_etf_issuer(etf_issuer):
-                raise CommandError(f"ETF issuer {etf_issuer} not recognised")
-            measurer = ETF_ISSUERS_CLASS_MAP[etf_issuer]()
-            measurer.process()
+        identifiers = {arg: options[arg] for arg in ARG_TYPES}
+        self._validate_etf(identifiers)
 
-    def _validate_etf_issuer(self, etf_issuer: str) -> bool:
+    def _validate_etf(self, identifiers: Dict[str, str]) -> None:
         """
         Check if the name of an ETF issuer is valid.
 
-        Returns:
+        Returns
             True if the name of the ETF issuer is valid else False.
         """
-        return etf_issuer in ETF_ISSUERS_CLASS_MAP
+        if not ETF.objects.filter(
+            exchange=identifiers["exchange"],
+            ticker=identifiers["ticker"],
+        ).exists():
+            raise CommandError("ETF not found in database")
