@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Type
+from typing import List
 
 from pandas import DataFrame
 
@@ -23,6 +23,15 @@ class ETFReader(ABC):
         """Initialise an ETFReader object"""
         self._identifiers = identifiers
         self._holdings_url = holdings_url
+
+    def read(self) -> None:
+        """The endpoint for reading an ETF and inserting the reading
+        into the application database
+        """
+        self._download()
+        self._parse_average_price_earnings()
+        self._parse_average_ev_ebitda()
+        self._insert_reading()
 
     @abstractmethod
     def _download(self) -> DataFrame:
@@ -52,7 +61,12 @@ class ETFReader(ABC):
 
         Returns:
             The average EV / EBITDA ratio for the ETF as float.
+        """
+        pass
 
+    @abstractmethod
+    def _insert_reading(self) -> None:
+        """Insert a reading into the application database
         """
         pass
 
@@ -69,14 +83,14 @@ class ETFReaderCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    def _factory_method(identifiers: List[str], holdings_url: str) -> Type[ETFReader]:
-        """
-        Returns a subclass of ETFReader.
+    def _factory_method(identifiers: List[str], holdings_url: str) -> ETFReader:
+        """Returns a subclass of ETFReader.
         """
         pass
 
     def read(self, identifiers: List[str], holdings_url: str) -> None:
-        """
-        Create a reader using a factory method and use it to read
+        """Create a reader using a factory method and use it to read
         from the specified ETF.
         """
+        reader = self._factory_method(identifiers, holdings_url)
+        reader.read()
