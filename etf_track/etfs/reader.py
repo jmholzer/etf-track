@@ -143,7 +143,7 @@ class ETFReaderCreator(ABC):
         reader.read()
 
 
-class iSharesETFReaderCreator(ABC):
+class iSharesETFReaderCreator(ETFReaderCreator):
     """The creator class for iSharesETFReader objects
 
     Attributes:
@@ -154,7 +154,6 @@ class iSharesETFReaderCreator(ABC):
     """
 
     @staticmethod
-    @abstractmethod
     def _factory_method(identifiers: List[str], holdings_url: str) -> ETFReader:
         """Returns a subclass of ETFReader.
         """
@@ -167,4 +166,7 @@ def get_etf_reader_factory(etf_provider_name: str) -> ETFReaderCreator:
     Returns:
         An ETFReader factory for the given etf_provider
     """
-    pass
+    etf_provider_product_mapping = {
+        "iShares": iSharesETFReaderCreator
+    }
+    return etf_provider_product_mapping[etf_provider_name]()
