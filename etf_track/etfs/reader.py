@@ -5,8 +5,7 @@ from pandas import DataFrame
 
 
 class ETFReader(ABC):
-    """
-    The base class for all ETF readers. Reading an ETF involves:
+    """The base class for all ETF readers. Reading an ETF involves:
         1. Downloading holding data
         2. Calculating stats from holding data
         3. Entering stats into db
@@ -71,14 +70,62 @@ class ETFReader(ABC):
         pass
 
 
-class ETFReaderCreator(ABC):
-    """
-    The creator class for ETFReader objects.
+class iSharesETFReader(ETFReader):
+    """The class for iShares ETF readers. Reading an ETF involves:
+        1. Downloading holding data
+        2. Calculating stats from holding data
+        3. Entering stats into db
 
     Attributes:
 
     Methods:
-        factory_method
+        _download
+        _parse_average_price_earnings
+        _parse_average_ev_ebitda
+    """
+
+    def _download(self) -> DataFrame:
+        """Download and store the data for a given ETF's holdings in a
+        ``DataFrame``.
+
+        Returns:
+            A ``DataFrame`` containing holdings data for ETF being processed.
+        """
+        pass
+
+    def _parse_average_price_earnings(self) -> float:
+        """Parse the data contained in the holdings DataFrame to calculate
+        the average price / earnings ratio for the ETF.
+
+        Returns:
+            The average price / earnings ratio for the ETF as float.
+
+        """
+        pass
+
+    def _parse_average_ev_ebitda(self) -> float:
+        """Parse the data contained in the holdings DataFrame to calculate
+        the average EV / EBITDA ratio for the ETF.
+
+        Returns:
+            The average EV / EBITDA ratio for the ETF as float.
+        """
+        pass
+
+    def _insert_reading(self) -> None:
+        """Insert a reading into the application database
+        """
+        pass
+
+
+class ETFReaderCreator(ABC):
+    """The creator class for ETFReader objects.
+
+    Attributes:
+
+    Methods:
+        _factory_method
+        read
     """
 
     @staticmethod
@@ -94,3 +141,30 @@ class ETFReaderCreator(ABC):
         """
         reader = self._factory_method(identifiers, holdings_url)
         reader.read()
+
+
+class iSharesETFReaderCreator(ABC):
+    """The creator class for iSharesETFReader objects
+
+    Attributes:
+
+    Methods:
+        _factory_method
+        read
+    """
+
+    @staticmethod
+    @abstractmethod
+    def _factory_method(identifiers: List[str], holdings_url: str) -> ETFReader:
+        """Returns a subclass of ETFReader.
+        """
+        return iSharesETFReader(identifiers, holdings_url)
+
+
+def get_etf_reader_factory(etf_provider_name: str) -> ETFReaderCreator:
+    """Create an ETFReader factory given the name of the ETF provider
+
+    Returns:
+        An ETFReader factory for the given etf_provider
+    """
+    pass
