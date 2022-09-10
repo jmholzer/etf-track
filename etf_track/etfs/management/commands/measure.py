@@ -19,10 +19,8 @@ class Command(BaseCommand):
 
     def _validate_etf(self, identifiers: Dict[str, str]) -> None:
         """
-        Check if the name of an ETF issuer is valid.
-
-        Returns
-            True if the name of the ETF issuer is valid else False.
+        Check if the name of an ETF issuer is valid and raise an
+        exception if not
         """
         if not ETF.objects.filter(
             exchange=identifiers["exchange"],
