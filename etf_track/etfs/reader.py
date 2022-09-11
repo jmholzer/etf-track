@@ -187,7 +187,7 @@ def get_etf_reader_factory(etf_provider_name: str) -> ETFReaderCreator:
     return etf_provider_product_mapping[etf_provider_name]()
 
 
-def query_etfs_by_provider(etf_provider_name: str) -> Tuple[List[str], str]:
+def query_etfs_by_provider(etf_provider_name: str) -> Tuple[Tuple[List[str], str]]:
     """Query the application database for the ETFs associated with a
     specified ETF provider
 
