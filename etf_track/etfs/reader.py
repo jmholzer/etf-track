@@ -3,6 +3,7 @@ from typing import List, Tuple
 
 from pandas import DataFrame
 
+from models import ETF
 
 """--- factory method pattern code ---"""
 
