@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-from pandas import DataFrame
-
 from models import ETF
+from pandas import DataFrame
 
 """--- factory method pattern code ---"""
 
@@ -69,8 +68,7 @@ class ETFReader(ABC):
 
     @abstractmethod
     def _insert_reading(self) -> None:
-        """Insert a reading into the application database
-        """
+        """Insert a reading into the application database"""
         pass
 
 
@@ -117,8 +115,7 @@ class iSharesETFReader(ETFReader):
         pass
 
     def _insert_reading(self) -> None:
-        """Insert a reading into the application database
-        """
+        """Insert a reading into the application database"""
         pass
 
 
@@ -135,8 +132,7 @@ class ETFReaderCreator(ABC):
     @staticmethod
     @abstractmethod
     def _factory_method(identifiers: List[str], holdings_url: str) -> ETFReader:
-        """Returns a subclass of ETFReader.
-        """
+        """Returns a subclass of ETFReader."""
         pass
 
     def read(self, identifiers: List[str], holdings_url: str) -> None:
@@ -159,8 +155,7 @@ class iSharesETFReaderCreator(ETFReaderCreator):
 
     @staticmethod
     def _factory_method(identifiers: List[str], holdings_url: str) -> ETFReader:
-        """Returns a subclass of ETFReader.
-        """
+        """Returns a subclass of ETFReader."""
         return iSharesETFReader(identifiers, holdings_url)
 
 
@@ -168,8 +163,7 @@ class iSharesETFReaderCreator(ETFReaderCreator):
 
 
 def read_all_etfs(etf_provider_name: str) -> None:
-    """Reads each ETF associated with a given ETF provider
-    """
+    """Reads each ETF associated with a given ETF provider"""
     reader_factory = get_etf_reader_factory(etf_provider_name)
     ETFs = query_etfs_by_provider(etf_provider_name)
     for identifiers, holdings_url in ETFs:
@@ -182,9 +176,7 @@ def get_etf_reader_factory(etf_provider_name: str) -> ETFReaderCreator:
     Returns:
         An ETFReader factory for the given etf_provider
     """
-    etf_provider_product_mapping = {
-        "iShares": iSharesETFReaderCreator
-    }
+    etf_provider_product_mapping = {"iShares": iSharesETFReaderCreator}
     return etf_provider_product_mapping[etf_provider_name]()
 
 
@@ -196,4 +188,6 @@ def query_etfs_by_provider(etf_provider_name: str) -> Tuple[Tuple[List[str], str
         A tuple containing (identifier, holdings_url) pairs
     for each ETF associated with a given ETF provider
     """
-    pass
+    return ETF.objects.filter(etf_issuer=etf_provider_name).values(
+        "ticker", "exchange", "holdings_url"
+    )
