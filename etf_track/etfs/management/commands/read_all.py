@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from etfs.models import ETF
+from etfs.reader import read_all_etfs
 
 
 class Command(BaseCommand):
@@ -11,6 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         etf_issuer = options["etf_issuer"]
         self._validate_etf(etf_issuer)
+        read_all_etfs(etf_issuer)
 
     def _validate_etf(self, etf_issuer: str) -> None:
         """Check if the name of an ETF issuer is valid and raise an
