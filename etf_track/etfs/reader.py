@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-from models import ETF
+from etfs.models import ETF
 from pandas import DataFrame
 
 """--- factory method pattern code ---"""
@@ -166,8 +166,9 @@ def read_all_etfs(etf_provider_name: str) -> None:
     """Reads each ETF associated with a given ETF provider"""
     reader_factory = get_etf_reader_factory(etf_provider_name)
     ETFs = query_etfs_by_provider(etf_provider_name)
-    for identifiers, holdings_url in ETFs:
-        reader_factory.read(identifiers, holdings_url)
+    print(ETFs)
+    #for identifiers, holdings_url in ETFs:
+    #    reader_factory.read(identifiers, holdings_url)
 
 
 def get_etf_reader_factory(etf_provider_name: str) -> ETFReaderCreator:
