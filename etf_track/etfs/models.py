@@ -3,9 +3,8 @@ from django.db import models
 
 class ETF(models.Model):
     etf_issuer = models.CharField(max_length=255)
-    ticker = models.CharField(max_length=10)
-    exchange = models.CharField(max_length=10)
     name = models.CharField(max_length=255)
+    portfolio_url = models.CharField(max_length=255)
     holdings_url = models.CharField(max_length=255)
     sector = models.CharField(max_length=255, null=True, blank=True)
     expense_ratio = models.FloatField(null=True, blank=True)
