@@ -4,11 +4,11 @@ from etfs.models import ETF
 
 ARGS = {
     "etf_issuer": {"type": str, "required": True},
-    "ticker": {"type": str, "required": True},
-    "exchange": {"type": str, "required": True},
     "name": {"type": str, "required": True},
     "holdings_url": {"type": str, "required": True},
     "sector": {"type": str, "required": False},
+    "expense_ratio": {"type": float, "required": False},
+    "portfolio_url": {"type": str, "required": True},
 }
 
 
