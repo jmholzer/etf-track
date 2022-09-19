@@ -100,7 +100,7 @@ class iSharesETFReader(ETFReader):
         Returns:
             A ``DataFrame`` containing holdings data for ETF being processed.
         """
-        self._holdings = read_csv(self._identifiers["holdings_url"], skiprows=[1, 2])
+        self._holdings = read_csv(self._identifiers["holdings_url"], skiprows=[0, 1])
 
     def _clean_holdings(self) -> None:
         """Apply data-cleaning steps to the holdings ``DataFrame``, applying
@@ -197,5 +197,5 @@ def query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
     for each ETF associated with a given ETF provider
     """
     return ETF.objects.filter(etf_issuer=etf_provider_name).values(
-        "ticker", "exchange", "holdings_url"
+        "name", "holdings_url"
     )
