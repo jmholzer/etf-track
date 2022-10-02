@@ -22,9 +22,7 @@ class Command(BaseCommand):
             )
 
     def handle(self, *args, **options):
-        identifiers = {}
-        for arg in ARGS:
-            identifiers[arg] = options[arg]
+        identifiers = {arg: options[arg] for arg in ARGS}
         self._save_etf(identifiers)
 
     def _save_etf(self, identifiers):
