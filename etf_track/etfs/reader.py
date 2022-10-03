@@ -108,14 +108,13 @@ class iSharesETFReader(ETFReader):
         """
         self._holdings = self._holdings[self._holdings.Sector.notnull()]
         self._holdings = self._holdings[self._holdings.Sector != "Cash and/or Derivatives"]
-        
+
     def _parse_average_price_earnings(self) -> float:
         """Parse the data contained in the holdings DataFrame to calculate
         the average price / earnings ratio for the ETF.
 
         Returns:
             The average price / earnings ratio for the ETF as float.
-
         """
         pass
 
@@ -125,6 +124,7 @@ class iSharesETFReader(ETFReader):
 
         Returns:
             The average EV / EBITDA ratio for the ETF as float.
+
         """
         pass
 
