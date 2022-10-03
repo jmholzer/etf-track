@@ -23,10 +23,12 @@ class Command(BaseCommand):
         self._input_file_path = options["input_file_path"]
         self._read_etfs()
 
-    def read_etfs(self):
+    def _read_etfs(self):
         with open(self._input_file_path, "r") as input_file:
             reader = DictReader(input_file)
             for row in reader:
+                # delete empty fields from row (potentially optional)
+                row = {key: row[key] for key in row if row[key]}
                 self._save_etf(row)
 
     def _save_etf(self, identifiers: Dict[str, Any]):
@@ -37,10 +39,10 @@ class Command(BaseCommand):
         if created:
             print(
                 "Succesfully created entry for"
-                f" {identifiers['etf_issuer']} {identifiers['name']}"
+                f" {identifiers['name']} ({identifiers['etf_issuer']})"
             )
         else:
             print(
-                f"Entry for {identifiers['etf_issuer']} {identifiers['name']}"
+                f"Entry for {identifiers['name']} ({identifiers['etf_issuer']})"
                 + " already in DB, no changes made"
             )
