@@ -130,3 +130,6 @@ dmypy.json
 
 # vscode
 .vscode
+
+# private store for exploratory test results etc.
+.notes
