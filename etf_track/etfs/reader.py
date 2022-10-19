@@ -32,6 +32,7 @@ class ETFReader(ABC):
         """
         holdings = self._download()
         self._clean_holdings(holdings)
+        self._transform_holdings(holdings)
         return holdings
 
     @abstractmethod
@@ -48,6 +49,13 @@ class ETFReader(ABC):
     def _clean_holdings(self, holdings: DataFrame) -> None:
         """Apply data-cleaning steps to the holdings ``DataFrame``, applying
         the chanes in place
+        """
+        pass
+
+    @abstractmethod
+    def _transform_holdings(self, holdings: DataFrame) -> None:
+        """Transform the dataframe so that it contains two columns, ticker
+        and percentage of fund, applying changes in-place
         """
         pass
 
@@ -74,10 +82,17 @@ class iSharesETFReader(ETFReader):
 
     def _clean_holdings(self, holdings) -> None:
         """Apply data-cleaning steps to the holdings ``DataFrame``, applying
-        changes in place
+        changes in-place
         """
         holdings = holdings[holdings.Sector.notnull()]
         holdings = holdings[holdings.Sector != "Cash and/or Derivatives"]
+
+    def _transform_holdings(self, holdings: DataFrame) -> None:
+        """Transform the dataframe so that it contains two columns, ticker
+        and percentage of fund, applying changes in-place
+        """
+        holdings = holdings[["Ticker", "Weight (%)"]]
+        holdings = holdings.rename(columns={"Ticker": "ticker", "Weight (%)": "weight"})
 
 
 class ETFReaderCreator(ABC):
@@ -122,9 +137,7 @@ class iSharesETFReaderCreator(ETFReaderCreator):
 
 """--- client code ---"""
 
-ETF_PROVIDER_CREATOR_MAPPING = {
-    "iShares": iSharesETFReaderCreator
-}
+ETF_PROVIDER_CREATOR_MAPPING = {"iShares": iSharesETFReaderCreator}
 
 
 def read_all_etfs(etf_provider: str) -> None:
