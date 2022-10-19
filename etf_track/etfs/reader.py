@@ -8,9 +8,8 @@ from pandas import read_csv, DataFrame
 
 
 class ETFReader(ABC):
-    """The base class for all ETF readers. Reading an ETF involves:
-        1. Downloading the holding data
-        2. Cleaning the data
+    """The base class for all ETF readers. ETF reader objects download, clean
+    and expose an ETF's holdings data as a DataFrame.
 
     Attributes:
         _identifiers
@@ -54,10 +53,7 @@ class ETFReader(ABC):
 
 
 class iSharesETFReader(ETFReader):
-    """The class for iShares ETF readers. Reading an ETF involves:
-        1. Downloading holding data
-        2. Calculating stats from holding data
-        3. Entering stats into db
+    """The class for iShares ETF readers.
 
     Attributes:
 
@@ -134,12 +130,18 @@ ETF_PROVIDER_CREATOR_MAPPING = {
 def read_all_etfs(etf_provider: str) -> None:
     """Reads each ETF associated with a given ETF provider"""
     creator = ETF_PROVIDER_CREATOR_MAPPING[etf_provider]()
-    etfs = query_etfs_by_provider(etf_provider)
+    etfs = _query_etfs_by_provider(etf_provider)
     for etf_identifiers in etfs:
         creator.read(etf_identifiers)
 
 
-def query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
+def _write_holdings(holdings: DataFrame) -> None:
+    """Write the data in a 'holdings' DataFrame, obtained from an ETFReader
+    object to the holdings table"""
+    pass
+
+
+def _query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
     """Query the application database for the ETFs associated with a
     specified ETF provider
 
