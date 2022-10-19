@@ -15,3 +15,9 @@ class Measurement(models.Model):
     date_time = models.DateTimeField()
     p_e = models.FloatField()
     ev_ebidta = models.FloatField()
+
+
+class Holdings(models.Model):
+    etf_id = models.PositiveBigIntegerField()
+    ticker = models.CharField(max_length=14)
+    percentage = models.FloatField()
