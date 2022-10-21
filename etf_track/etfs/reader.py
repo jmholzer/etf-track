@@ -187,7 +187,9 @@ def _update_holdings(etf_id: int, downloaded_holdings: DataFrame) -> None:
     _delete_orphan_tickers(orphan_tickers)
 
 
-def _find_orphan_tickers(downloaded_holdings: DataFrame, stored_holdings: DataFrame) -> Set[str]:
+def _find_orphan_tickers(
+    downloaded_holdings: DataFrame, stored_holdings: DataFrame
+) -> Set[str]:
     """Take a set of tickers and return a set of tickers from the holdings
     table are not present in the input ('orphan' tickers)
 
