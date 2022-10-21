@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Set
 
 from etfs.models import ETF
 from pandas import read_csv, DataFrame
@@ -148,12 +148,6 @@ def read_all_etfs(etf_provider: str) -> None:
         creator.read(etf_identifiers)
 
 
-def _write_holdings(holdings: DataFrame) -> None:
-    """Write the data in a 'holdings' DataFrame, obtained from an ETFReader
-    object to the holdings table"""
-    pass
-
-
 def _query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
     """Query the application database for the ETFs associated with a
     specified ETF provider
@@ -165,3 +159,52 @@ def _query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
     return ETF.objects.filter(etf_issuer=etf_provider_name).values(
         "name", "holdings_url"
     )
+
+
+def _query_holdings_by_etf_id(etf_id: int) -> DataFrame:
+    """Query the holdings of an ETF using its id
+
+    Arguments:
+        etf_id: the id of the ETF to return holdings for
+    
+    Returns:
+        a DataFrame containing the stored holdings of the given ETF
+    """
+    pass
+
+
+def _update_holdings(etf_id: int, downloaded_holdings: DataFrame) -> None:
+    """Write the data in a 'holdings' DataFrame, obtained from an ETFReader
+    object to the holdings table
+
+    Arguments:
+        downloaded_holdings: a DataFrame containing tickers and their
+            percentage allocation in an ETF.
+    """
+    stored_holdings = _query_holdings_by_etf_id(etf_id)
+
+    orphan_tickers = _find_orphan_tickers(downloaded_holdings, stored_holdings)
+    _delete_orphan_tickers(orphan_tickers)
+
+
+def _find_orphan_tickers(downloaded_holdings: DataFrame, stored_holdings: DataFrame) -> Set[str]:
+    """Take a set of tickers and return a set of tickers from the holdings
+    table are not present in the input ('orphan' tickers)
+
+    Arguments:
+        tickers: the set of tickers to compare against the holdings
+
+    Returns:
+        a set of orphan tickers
+    """
+    pass
+
+
+def _delete_orphan_tickers(tickers: Set[str]) -> None:
+    """Delete all rows from the holdings table whose primary key (ticker) is
+    in the given set.
+
+    Arguments:
+        tickers: the set of tickers to delete rows for
+    """
+    pass
