@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Dict, Set
+from typing import Dict, Set, Tuple
 
-from etfs.models import ETF
-from pandas import read_csv, DataFrame
+from pandas import DataFrame, read_csv
+
+from etfs.models import ETF, Holdings
+from etfs.utils import convert_queryset_to_dataframe
 
 """--- factory method pattern code ---"""
 
@@ -166,11 +168,14 @@ def _query_holdings_by_etf_id(etf_id: int) -> DataFrame:
 
     Arguments:
         etf_id: the id of the ETF to return holdings for
-    
+
     Returns:
         a DataFrame containing the stored holdings of the given ETF
     """
-    pass
+    query_results = Holdings.objects.filter(etf_id=etf_id)
+    query_results = convert_queryset_to_dataframe(query_results, exclude_id=True)
+    query_results = query_results[["ticker", "percentage"]]
+    return query_results
 
 
 def _update_holdings(etf_id: int, downloaded_holdings: DataFrame) -> None:
@@ -199,7 +204,9 @@ def _find_orphan_tickers(
     Returns:
         a set of orphan tickers
     """
-    pass
+    downloaded_tickers = set(downloaded_holdings["ticker"])
+    stored_tickers = set(stored_holdings["ticker"])
+    return stored_tickers - downloaded_tickers
 
 
 def _delete_orphan_tickers(tickers: Set[str]) -> None:
