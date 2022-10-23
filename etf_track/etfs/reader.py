@@ -113,12 +113,12 @@ class ETFReaderCreator(ABC):
         """Returns a subclass of ETFReader."""
         pass
 
-    def read(self, identifiers: Dict[str, str]) -> None:
+    def read(self, identifiers: Dict[str, str]) -> DataFrame:
         """Create a reader using a factory method and use it to read
         from the specified ETF.
         """
         reader = self._factory_method(identifiers)
-        reader.read()
+        return reader.read()
 
 
 class iSharesETFReaderCreator(ETFReaderCreator):
@@ -147,7 +147,8 @@ def read_all_etfs(etf_provider: str) -> None:
     creator = ETF_PROVIDER_CREATOR_MAPPING[etf_provider]()
     etfs = _query_etfs_by_provider(etf_provider)
     for etf_identifiers in etfs:
-        creator.read(etf_identifiers)
+        downloaded_holdings = creator.read(etf_identifiers)
+        _update_holdings(etf_identifiers["etf_id"], downloaded_holdings)
 
 
 def _query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
@@ -159,7 +160,7 @@ def _query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
     for each ETF associated with a given ETF provider
     """
     return ETF.objects.filter(etf_issuer=etf_provider_name).values(
-        "name", "holdings_url"
+        "id", "name", "holdings_url"
     )
 
 
@@ -187,9 +188,9 @@ def _update_holdings(etf_id: int, downloaded_holdings: DataFrame) -> None:
             percentage allocation in an ETF.
     """
     stored_holdings = _query_holdings_by_etf_id(etf_id)
-
     orphan_tickers = _find_orphan_tickers(downloaded_holdings, stored_holdings)
     _delete_holdings(etf_id, orphan_tickers)
+    _add_or_update_holdings(etf_id, downloaded_holdings)
 
 
 def _find_orphan_tickers(
@@ -209,7 +210,7 @@ def _find_orphan_tickers(
     return stored_tickers - downloaded_tickers
 
 
-def _add_holdings(etf_id: int, holdings_to_add: DataFrame) -> None:
+def _add_or_update_holdings(etf_id: int, holdings_to_add: DataFrame) -> None:
     """Create or update rows in the holdings table using data in a DataFrame
 
     Arguments:
