@@ -5,6 +5,7 @@ from etfs.models import Holdings
 from etfs.reader import (
     _find_orphan_tickers,
     _query_holdings_by_etf_id,
+    _add_holdings,
 )
 
 
@@ -31,3 +32,14 @@ class TestUpdateHoldings(TestCase):
         )
         result = _query_holdings_by_etf_id(1)
         self.assertTrue(result.equals(expected))
+
+    def test_add_holdings(self):
+        kwargs = {
+            "etf_id": 3,
+            "holdings_to_add": DataFrame.from_dict(
+                {"ticker": ["MSFT"], "percentage": [19.8]}
+            ),
+        }
+        _add_holdings(**kwargs)
+        result = Holdings.objects.filter(etf_id=3, ticker="MSFT", percentage=19.8).exists()
+        self.assertTrue(result)
