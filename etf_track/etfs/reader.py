@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Set, Tuple
+from typing import Dict, Set, Tuple, Optional
 
 from pandas import DataFrame, read_csv
 
@@ -148,7 +148,7 @@ def read_all_etfs(etf_provider: str) -> None:
     etfs = _query_etfs_by_provider(etf_provider)
     for etf_identifiers in etfs:
         downloaded_holdings = creator.read(etf_identifiers)
-        _update_holdings(etf_identifiers["etf_id"], downloaded_holdings)
+        _update_holdings(int(etf_identifiers["id"]), downloaded_holdings)
 
 
 def _query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
@@ -164,16 +164,19 @@ def _query_etfs_by_provider(etf_provider_name: str) -> Tuple[Dict[str, str]]:
     )
 
 
-def _query_holdings_by_etf_id(etf_id: int) -> DataFrame:
+def _query_holdings_by_etf_id(etf_id: int) -> Optional[DataFrame]:
     """Query the holdings of an ETF using its id
 
     Arguments:
         etf_id: the id of the ETF to return holdings for
 
     Returns:
-        a DataFrame containing the stored holdings of the given ETF
+        a DataFrame containing the stored holdings of the given ETF, or None if
+        there are no stored holdings
     """
     query_results = Holdings.objects.filter(etf_id=etf_id)
+    if not query_results:
+        return None
     query_results = convert_queryset_to_dataframe(query_results, exclude_id=True)
     query_results = query_results[["ticker", "percentage"]]
     return query_results
@@ -188,8 +191,9 @@ def _update_holdings(etf_id: int, downloaded_holdings: DataFrame) -> None:
             percentage allocation in an ETF.
     """
     stored_holdings = _query_holdings_by_etf_id(etf_id)
-    orphan_tickers = _find_orphan_tickers(downloaded_holdings, stored_holdings)
-    _delete_holdings(etf_id, orphan_tickers)
+    if stored_holdings:
+        orphan_tickers = _find_orphan_tickers(downloaded_holdings, stored_holdings)
+        _delete_holdings(etf_id, orphan_tickers)
     _add_or_update_holdings(etf_id, downloaded_holdings)
 
 
@@ -221,7 +225,7 @@ def _add_or_update_holdings(etf_id: int, holdings_to_add: DataFrame) -> None:
         Holdings.objects.update_or_create(
             etf_id=etf_id,
             ticker=row["ticker"],
-            defaults={"percentage": row["percentage"]}
+            defaults={"percentage": row["percentage"]},
         )
 
 
