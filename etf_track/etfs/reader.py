@@ -189,7 +189,7 @@ def _update_holdings(etf_id: int, downloaded_holdings: DataFrame) -> None:
     stored_holdings = _query_holdings_by_etf_id(etf_id)
 
     orphan_tickers = _find_orphan_tickers(downloaded_holdings, stored_holdings)
-    _delete_orphan_tickers(orphan_tickers)
+    _delete_holdings(etf_id, orphan_tickers)
 
 
 def _find_orphan_tickers(
@@ -209,11 +209,28 @@ def _find_orphan_tickers(
     return stored_tickers - downloaded_tickers
 
 
-def _delete_orphan_tickers(tickers: Set[str]) -> None:
-    """Delete all rows from the holdings table whose primary key (ticker) is
-    in the given set.
+def _add_holdings(etf_id: int, holdings_to_add: DataFrame) -> None:
+    """Create or update rows in the holdings table using data in a DataFrame
 
     Arguments:
+        etf_id: the etf id to create holdings rows for
+        holdings: the DataFrame containing holdings information
+    """
+    for _, row in holdings_to_add.iterrows():
+        Holdings.objects.update_or_create(
+            etf_id=etf_id,
+            ticker=row["ticker"],
+            defaults={"percentage": row["percentage"]}
+        )
+
+
+def _delete_holdings(etf_id: int, tickers: Set[str]) -> None:
+    """Delete all rows from the holdings table with the given etf_id and
+    a value for ticker in the given set.
+
+    Arguments:
+        etf_id: the id of the ETF to delete holdings for
         tickers: the set of tickers to delete rows for
     """
-    pass
+    for ticker in tickers:
+        Holdings.objects.filter(etf_id=etf_id, ticker=ticker).delete()
