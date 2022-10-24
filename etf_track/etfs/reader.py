@@ -33,8 +33,8 @@ class ETFReader(ABC):
             the holdings of the ETF
         """
         holdings = self._download()
-        self._clean_holdings(holdings)
-        self._transform_holdings(holdings)
+        holdings = self._clean_holdings(holdings)
+        holdings = self._transform_holdings(holdings)
         return holdings
 
     @abstractmethod
@@ -48,16 +48,15 @@ class ETFReader(ABC):
         pass
 
     @abstractmethod
-    def _clean_holdings(self, holdings: DataFrame) -> None:
-        """Apply data-cleaning steps to the holdings ``DataFrame``, applying
-        the chanes in place
+    def _clean_holdings(self, holdings: DataFrame) -> DataFrame:
+        """Apply data-cleaning steps to the holdings ``DataFrame``
         """
         pass
 
     @abstractmethod
-    def _transform_holdings(self, holdings: DataFrame) -> None:
+    def _transform_holdings(self, holdings: DataFrame) -> DataFrame:
         """Transform the dataframe so that it contains two columns, ticker
-        and percentage of fund, applying changes in-place
+        and percentage of fund
         """
         pass
 
@@ -82,19 +81,20 @@ class iSharesETFReader(ETFReader):
         """
         return read_csv(self._identifiers["holdings_url"], skiprows=[0, 1])
 
-    def _clean_holdings(self, holdings) -> None:
-        """Apply data-cleaning steps to the holdings ``DataFrame``, applying
-        changes in-place
+    def _clean_holdings(self, holdings) -> DataFrame:
+        """Apply data-cleaning steps to the holdings ``DataFrame``
         """
         holdings = holdings[holdings.Sector.notnull()]
         holdings = holdings[holdings.Sector != "Cash and/or Derivatives"]
+        return holdings
 
-    def _transform_holdings(self, holdings: DataFrame) -> None:
+    def _transform_holdings(self, holdings: DataFrame) -> DataFrame:
         """Transform the dataframe so that it contains two columns, ticker
-        and percentage of fund, applying changes in-place
+        and percentage of fund
         """
         holdings = holdings[["Ticker", "Weight (%)"]]
-        holdings = holdings.rename(columns={"Ticker": "ticker", "Weight (%)": "weight"})
+        holdings = holdings.rename(columns={"Ticker": "ticker", "Weight (%)": "percentage"})
+        return holdings
 
 
 class ETFReaderCreator(ABC):
