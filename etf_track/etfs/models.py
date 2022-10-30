@@ -21,3 +21,9 @@ class Holdings(models.Model):
     etf_id = models.PositiveBigIntegerField()
     ticker = models.CharField(max_length=14)
     percentage = models.FloatField()
+
+
+class Fundamentals(models.Model):
+    ticker = models.CharField(max_length=14)
+    last_updated = models.DateTimeField(auto_now=True, null=True, blank=True)
+    eps = models.FloatField(null=True, blank=True)
