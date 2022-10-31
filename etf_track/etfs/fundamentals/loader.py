@@ -1,11 +1,10 @@
-from etfs.models import Fundamentals
-from etfs.models import Holdings
-
 from typing import Set
+
+from etfs.models import Fundamentals, Holdings
 
 
 def update_fundamentals() -> None:
-    """Update the fundamentals table by comparing tickers with
+    """Update the Fundamentals table by comparing tickers with
     the Holdings table.
     """
     pass
@@ -17,7 +16,7 @@ def _read_all_holding_tickers() -> Set[str]:
     Returns:
         A set of all the tickers in the Holdings table
     """
-    pass
+    return {row["ticker"] for row in Holdings.objects.values("ticker")}
 
 
 def _read_all_fundamentals_tickers() -> Set[str]:
@@ -26,7 +25,7 @@ def _read_all_fundamentals_tickers() -> Set[str]:
     Returns:
         A set of all the tickers in the Holdings table
     """
-    pass
+    return {row["ticker"] for row in Fundamentals.objects.values("ticker")}
 
 
 def _remove_unused_tickers(unused_tickers: Set[str]) -> None:
