@@ -29,18 +29,20 @@ def _read_all_fundamentals_tickers() -> Set[str]:
 
 
 def _remove_unused_tickers(unused_tickers: Set[str]) -> None:
-    """Remove unused tickers from the Fundamentals table.
+    """Remove rows for unused tickers from the Fundamentals table.
 
     Arguments:
         unused_tickers: a set containing the unused tickers to remove
     """
-    pass
+    for ticker in unused_tickers:
+        Fundamentals.objects.filter(ticker=ticker).delete()
 
 
 def _add_missing_tickers(missing_tickers: Set[str]) -> None:
-    """Add missing tickers to the Fundamentals table.
+    """Add rows for missing tickers to the Fundamentals table.
 
     Arguments:
         missing_tickers: a set containing the missing tickers to add
     """
-    pass
+    for ticker in missing_tickers:
+        Fundamentals.objects.create(ticker=ticker)
