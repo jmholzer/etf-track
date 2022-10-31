@@ -47,8 +47,7 @@ class ETFReader(ABC):
 
     @abstractmethod
     def _clean_holdings(self, holdings: DataFrame) -> DataFrame:
-        """Apply data-cleaning steps to the holdings ``DataFrame``
-        """
+        """Apply data-cleaning steps to the holdings ``DataFrame``"""
         pass
 
     @abstractmethod
@@ -80,8 +79,7 @@ class iSharesETFReader(ETFReader):
         return read_csv(self._identifiers["holdings_url"], skiprows=[0, 1])
 
     def _clean_holdings(self, holdings) -> DataFrame:
-        """Apply data-cleaning steps to the holdings ``DataFrame``
-        """
+        """Apply data-cleaning steps to the holdings ``DataFrame``"""
         holdings = holdings[holdings.Sector.notnull()]
         holdings = holdings[holdings.Sector != "Cash and/or Derivatives"]
         return holdings
@@ -91,7 +89,9 @@ class iSharesETFReader(ETFReader):
         and percentage of fund
         """
         holdings = holdings[["Ticker", "Weight (%)"]]
-        holdings = holdings.rename(columns={"Ticker": "ticker", "Weight (%)": "percentage"})
+        holdings = holdings.rename(
+            columns={"Ticker": "ticker", "Weight (%)": "percentage"}
+        )
         return holdings
 
 
