@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from etfs.models import ETF
-from etfs.reader import read_all_etfs
+from etfs.holdings.loader import read_all_etfs
 
 
 class Command(BaseCommand):
