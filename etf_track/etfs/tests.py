@@ -2,7 +2,7 @@ from django.test import TestCase
 from pandas import DataFrame
 
 from etfs.models import Holdings
-from etfs.reader import (
+from etfs.holdings.loader import (
     _find_orphan_tickers,
     _query_holdings_by_etf_id,
     _add_or_update_holdings,
